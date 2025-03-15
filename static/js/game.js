@@ -266,7 +266,7 @@ function castRays() {
         }
         wallX -= Math.floor(wallX);
 
-        const texX = Math.floor(wallX * textures[gameMap[mapX][mapY]].width);
+	const texX = Math.floor(wallX * textures[gameMap[mapX][mapY]].width * 0.99);
         if(texX < 0) texX = 0;
         if(texX > textures[gameMap[mapX][mapY]].width) texX = textures[gameMap[mapX][mapY]].width - 1;
 
