@@ -6,11 +6,11 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 const config = {
     resolution: isMobile ? 80 : 120,
     fov: Math.PI / (isMobile ? 2.2 : 2.5),
-    moveSpeed: isMobile ? 0.06 : 0.08,
-    rotSpeed: isMobile ? 0.03 : 0.04,
+    moveSpeed: isMobile ? 0.10 : 0.12,
+    rotSpeed: isMobile ? 0.06 : 0.07,
     wallHeight: 1.0,
-    touchSensitivity: 0.02,
-    backwardSpeedMultiplier: 0.7
+    touchSensitivity: 0.04,
+    backwardSpeedMultiplier: 0.8
 };
 
 canvas.width = isMobile ? window.innerWidth : 800;
@@ -178,8 +178,6 @@ function movePlayer() {
     }
 }
         
-
-// Substitua a função castRays por esta versão corrigida
 function castRays() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
     ctx.fillRect(0, canvas.height/2, canvas.width, canvas.height/2);
@@ -207,7 +205,6 @@ function castRays() {
         let hit = 0;
         let side;
 
-        // Cálculo inicial das distâncias laterais
         if(rayDir.x < 0) {
             stepX = -1;
             sideDistX = (player.x - mapX) * deltaDistX;
@@ -224,9 +221,8 @@ function castRays() {
             sideDistY = (mapY + 1 - player.y) * deltaDistY;
         }
 
-        // DDA
-        while(hit === 0) {
-            if(sideDistX < sideDistY) {
+        while (hit === 0) {
+            if (sideDistX < sideDistY) {
                 sideDistX += deltaDistX;
                 mapX += stepX;
                 side = 0;
@@ -236,27 +232,27 @@ function castRays() {
                 side = 1;
             }
 
-            // Verifica limites do mapa
-            if(mapX < 0 || mapX >= gameMap.length || mapY < 0 || mapY >= gameMap[0].length) {
-                hit = 1; // Considera como parede se ultrapassar os limites do mapa
+            if (mapX < 0 || mapX >= gameMap.length || mapY < 0 || mapY >= gameMap[0].length) {
+                hit = 1;
                 continue;
             }
 
-            if(gameMap[mapX][mapY] > 0) hit = 1;
+            if (gameMap[mapX][mapY] > 0) {
+                hit = 1;
+            }
         }
 
-        // Cálculo da distância perpendicular CORRETA
         if(side === 0) {
-            perpWallDist = (mapX - player.x + (1 - stepX) / 2) / rayDir.x;
+            perpWallDist = (mapX - player.x + (1 - stepX)/2) / rayDir.x;
         } else {
-            perpWallDist = (mapY - player.y + (1 - stepY) / 2) / rayDir.y;
+            perpWallDist = (mapY - player.y + (1 - stepY)/2) / rayDir.y;
         }
 
-	const correctedDist = perpWallDist * Math.cos(player.angle - rayAngle);
-
+        const correctedDist = perpWallDist * Math.cos(player.angle - rayAngle);
         const height = (canvas.height / correctedDist) * config.wallHeight;
-        const yStart = Math.max(0, canvas.height/2 - height/2);
-        const yEnd = Math.min(canvas.height, canvas.height/2 + height/2);
+        const MAX_HEIGHT = canvas.height * 2;
+        const clampedHeight = Math.min(height, MAX_HEIGHT);
+        const finalYStart = Math.max(0, canvas.height/2 - clampedHeight/2);
 
         let wallX;
         if(side === 0) {
@@ -266,23 +262,22 @@ function castRays() {
         }
         wallX -= Math.floor(wallX);
 
-	const texX = Math.floor(wallX * textures[gameMap[mapX][mapY]].width * 0.99);
-        if(texX < 0) texX = 0;
-        if(texX > textures[gameMap[mapX][mapY]].width) texX = textures[gameMap[mapX][mapY]].width - 1;
+        const texX = Math.floor(wallX * textures[gameMap[mapX][mapY]].width * 0.99);
+        const tex = textures[gameMap[mapX][mapY]];
 
-        if(textures[gameMap[mapX][mapY]].complete) {
+        if(tex.complete) {
             ctx.drawImage(
-                textures[gameMap[mapX][mapY]],
-                texX, 0, 1, textures[gameMap[mapX][mapY]].height,
-                ray * (canvas.width/config.resolution), yStart,
-                canvas.width/config.resolution + 1, height
+                tex,
+                texX, 0, 1, tex.height,
+                ray * (canvas.width/config.resolution), finalYStart,
+                canvas.width/config.resolution + 1, clampedHeight
             );
         }
 
         ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(perpWallDist/12, 0.8)})`;
         ctx.fillRect(
-            ray * (canvas.width/config.resolution), yStart,
-            canvas.width/config.resolution, height
+            ray * (canvas.width/config.resolution), finalYStart,
+            canvas.width/config.resolution, clampedHeight
         );
     }
 }
