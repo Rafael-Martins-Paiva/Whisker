@@ -35,11 +35,12 @@
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
-    <div id="controls">
-        <div class="touch-btn" id="left">←</div>
-        <div class="touch-btn" id="up">↑</div>
-        <div class="touch-btn" id="right">→</div>
-    </div>
+<div id="mobileControls">
+    <button id="up">↑</button>
+    <button id="down">↓</button>
+    <button id="left">←</button>
+    <button id="right">→</button>
+</div>
     <script src="{{ url_for('static', filename='js/game.js') }}"></script>
 </body>
 </html>

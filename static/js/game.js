@@ -1,202 +1,193 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-canvas.width = 800;
-canvas.height = 600;
 
-// Configurações melhoradas
-const config = {
-    resolution: 120,
-    fov: Math.PI / 2.5,
-    moveSpeed: 0.08,
-    rotSpeed: 0.04,
-    wallHeight: 1.0
-};
-
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-// Ajusta tamanho para mobile
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-const screenWidth = isMobile ? window.innerWidth : 800;
-const screenHeight = isMobile ? window.innerHeight : 600;
 
-canvas.width = screenWidth;
-canvas.height = screenHeight;
-
-// Configurações otimizadas para mobile
 const config = {
     resolution: isMobile ? 80 : 120,
-    fov: Math.PI / 2.2,
-    moveSpeed: 0.06,
-    rotSpeed: 0.03,
+    fov: Math.PI / (isMobile ? 2.2 : 2.5),
+    moveSpeed: isMobile ? 0.06 : 0.08,
+    rotSpeed: isMobile ? 0.03 : 0.04,
     wallHeight: 1.0,
-    touchSensitivity: 0.02
+    touchSensitivity: 0.02,
+    backwardSpeedMultiplier: 0.7
 };
 
-// Mapa e texturas (mesmo código anterior)
-// ...
+canvas.width = isMobile ? window.innerWidth : 800;
+canvas.height = isMobile ? window.innerHeight : 600;
 
-// Controles touch
-let touchStartX = 0;
-let touchStartY = 0;
-let touchMoveX = 0;
-let touchMoveY = 0;
-
-const touchControls = {
-    up: false,
-    left: false,
-    right: false
-};
-
-// Configura controles touch
-function setupTouchControls() {
-    const upBtn = document.getElementById('up');
-    const leftBtn = document.getElementById('left');
-    const rightBtn = document.getElementById('right');
-
-    const handleTouchStart = (btn) => (e) => {
-        e.preventDefault();
-        touchControls[btn] = true;
-    };
-
-    const handleTouchEnd = (btn) => (e) => {
-        e.preventDefault();
-        touchControls[btn] = false;
-    };
-
-    upBtn.addEventListener('touchstart', handleTouchStart('up'));
-    upBtn.addEventListener('touchend', handleTouchEnd('up'));
-    upBtn.addEventListener('touchcancel', handleTouchEnd('up'));
-
-    leftBtn.addEventListener('touchstart', handleTouchStart('left'));
-    leftBtn.addEventListener('touchend', handleTouchEnd('left'));
-    leftBtn.addEventListener('touchcancel', handleTouchEnd('left'));
-
-    rightBtn.addEventListener('touchstart', handleTouchStart('right'));
-    rightBtn.addEventListener('touchend', handleTouchEnd('right'));
-    rightBtn.addEventListener('touchcancel', handleTouchEnd('right'));
-
-    // Controle de movimento por gestos
-    canvas.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    });
-
-    canvas.addEventListener('touchmove', (e) => {
-        touchMoveX = e.touches[0].clientX - touchStartX;
-        touchMoveY = e.touches[0].clientY - touchStartY;
-        e.preventDefault();
-    });
-
-    canvas.addEventListener('touchend', () => {
-        touchMoveX = 0;
-        touchMoveY = 0;
-    });
-}
-
-// Movimentação adaptada para mobile
-function movePlayer() {
-    // Movimento para frente/trás
-    if(touchControls.up || touchMoveY < -30) {
-        const newX = player.x + Math.cos(player.angle) * config.moveSpeed;
-        const newY = player.y + Math.sin(player.angle) * config.moveSpeed;
-        
-        if(gameMap[Math.floor(newX)][Math.floor(player.y)] === 0) player.x = newX;
-        if(gameMap[Math.floor(player.x)][Math.floor(newY)] === 0) player.y = newY;
-    }
-
-    // Rotação
-    if(touchControls.left || touchMoveX < -30) {
-        player.angle -= config.rotSpeed;
-    }
-    if(touchControls.right || touchMoveX > 30) {
-        player.angle += config.rotSpeed;
-    }
-}
-
-// Otimizações para mobile
-function optimizeForMobile() {
-    // Reduz qualidade gráfica
-    config.resolution = Math.min(config.resolution, 100);
-    config.fov = Math.PI / 2.5;
-    
-    // Ajusta tamanho do canvas
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-    
-    // Previne comportamento padrão do touch
-    document.body.addEventListener('touchstart', (e) => {
-        if(e.target === canvas) e.preventDefault();
-    }, { passive: false });
-    
-    document.body.addEventListener('touchmove', (e) => {
-        if(e.target === canvas) e.preventDefault();
-    }, { passive: false });
-}
-
-
-function init() {
-    if(isMobile) {
-        optimizeForMobile();
-        setupTouchControls();
-    }
-    
-    // Carrega texturas e inicia o jogo
-    Promise.all(Object.values(textures).map(img => {
-        if(!img.complete) return new Promise(resolve => {
-            img.onload = resolve;
-        });
-    }).then(gameLoop);
-}
-
-// Mapa mais complexo
 const gameMap = [
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 2, 0, 0, 0, 1],
-    [1, 0, 1, 1, 1, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 3, 1],
-    [1, 0, 1, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1]
+    [1,1,1,1,1,1,1,1],
+    [1,0,0,2,0,0,0,1],
+    [1,0,1,1,0,0,0,1],
+    [1,0,0,0,0,0,3,1],
+    [1,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1]
 ];
 
-// Jogador
 const player = {
-    x: 2.5,
-    y: 2.5,
+    x: 1.5,
+    y: 1.5,
     angle: 0
 };
 
-// Sistema de texturas
 const textures = {
-    1: loadTexture('wall1.jpg'),
-    2: loadTexture('wall2.jpg'),
-    3: loadTexture('wall3.jpg')
+    1: new Image(),
+    2: new Image(),
+    3: new Image()
 };
 
-function loadTexture(filename) {
-    const img = new Image();
-    img.src = `static/textures/${filename}`;
-    return img;
+textures[1].src = '/static/textures/wall1.jpg';
+textures[2].src = '/static/textures/wall2.jpg';
+textures[3].src = '/static/textures/wall3.jpg';
+
+const keys = {};
+let touchControls = {
+    up: false,
+    left: false,
+    down: false,
+    right: false
+};
+
+let touchStartX = 0, touchStartY = 0, touchMoveX = 0, touchMoveY = 0;
+
+function setupControls() {
+    window.addEventListener('keydown', e => keys[e.key] = true);
+    window.addEventListener('keyup', e => keys[e.key] = false);
+
+    if(isMobile) {
+        const controlButtons = {
+            up: document.getElementById('up'),
+            left: document.getElementById('left'),
+	    down: document.getElementById('down'),
+            right: document.getElementById('right')
+        };
+
+        const handleTouch = (control, state) => (e) => {
+            e.preventDefault();
+            touchControls[control] = state;
+            controlButtons[control].style.backgroundColor = state ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.7)';
+        };
+
+        controlButtons.up.addEventListener('touchstart', handleTouch('up', true));
+        controlButtons.up.addEventListener('touchend', handleTouch('up', false));
+        controlButtons.up.addEventListener('touchcancel', handleTouch('up', false));
+
+        controlButtons.left.addEventListener('touchstart', handleTouch('left', true));
+        controlButtons.left.addEventListener('touchend', handleTouch('left', false));
+        controlButtons.left.addEventListener('touchcancel', handleTouch('left', false));
+
+
+	    controlButtons.down.addEventListener('touchstart', handleTouch('down', true));
+            controlButtons.down.addEventListener('touchend', handleTouch('down', false));
+            controlButtons.down.addEventListener('touchcancel', handleTouch('down', false));
+
+	controlButtons.right.addEventListener('touchstart', handleTouch('right', true));                                                    controlButtons.right.addEventListener('touchend', handleTouch('right', false));
+        controlButtons.right.addEventListener('touchcancel', handleTouch('right', false));
+
+        canvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if(e.touches.length === 1) {
+                touchMoveX = e.touches[0].clientX - touchStartX;
+                touchMoveY = e.touches[0].clientY - touchStartY;
+            }
+            e.preventDefault();
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => {
+            touchMoveX = 0;
+            touchMoveY = 0;
+        });
+    }
 }
 
-// Controles
-const keys = {};
-window.addEventListener('keydown', e => keys[e.key] = true);
-window.addEventListener('keyup', e => keys[e.key] = false);
+if(isMobile) {
+    if(touchControls.up) {
+        const newX = player.x + Math.cos(player.angle) * config.moveSpeed;
+        const newY = player.y + Math.sin(player.angle) * config.moveSpeed;
+        if(gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {
+            player.x = newX;
+            player.y = newY;
+        }
+    }
+    
+    if(touchMoveY < -40) {
+        const newX = player.x + Math.cos(player.angle) * config.moveSpeed * 1.5;
+        const newY = player.y + Math.sin(player.angle) * config.moveSpeed * 1.5;
+        if(gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {
+            player.x = newX;
+            player.y = newY;
+        }
+    }
 
-// Função de raycasting corrigida
+    if(touchControls.left || touchMoveX < -40) {
+        player.angle -= config.rotSpeed;
+    }
+    if(touchControls.right || touchMoveX > 40) {
+        player.angle += config.rotSpeed;
+    }
+}	
+
+function moveBackward() {
+    const newX = player.x - Math.cos(player.angle) * config.moveSpeed * config.backwardSpeedMultiplier;
+    const newY = player.y - Math.sin(player.angle) * config.moveSpeed * config.backwardSpeedMultiplier;
+    return [newX, newY];
+}
+
+function movePlayer() {
+    if(keys['w']) {
+        const newX = player.x + Math.cos(player.angle) * config.moveSpeed;
+        const newY = player.y + Math.sin(player.angle) * config.moveSpeed;
+        if(newX >= 0 && newX < gameMap.length &&
+           newY >= 0 && newY < gameMap[0].length &&                                                gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {                                     player.x = newX;                            player.y = newY;                        }                                       }
+    
+    if(keys['s']) {                                 const [newX, newY] = moveBackward();        if(newX >= 0 && newX < gameMap.length &&
+           newY >= 0 && newY < gameMap[0].length &&                                                gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {                                     player.x = newX;                            player.y = newY;                        }                                       }                                       
+
+    if(keys['a']) player.angle -= config.rotSpeed;
+    if(keys['d']) player.angle += config.rotSpeed;
+
+    if(isMobile) {
+        if(touchControls.up || touchMoveY < -20) {
+            const newX = player.x + Math.cos(player.angle) * config.moveSpeed;
+            const newY = player.y + Math.sin(player.angle) * config.moveSpeed;
+            if(gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {
+                player.x = newX;
+                player.y = newY;
+            }
+        }
+
+
+
+	if(touchMoveY > 20) {                           const [newX, newY] = moveBackward();
+	    if(newX >= 0 && newX < gameMap.length &&
+           newY >= 0 && newY < gameMap[0].length &&                                                gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {                                     player.x = newX;                            player.y = newY;                        }                                       }                                      
+
+        if(touchControls.left || touchMoveX < -30) {
+            player.angle -= config.rotSpeed;
+        }
+        if(touchControls.right || touchMoveX > 30) {
+            player.angle += config.rotSpeed;
+        }
+    }
+}
+        
+
+// Substitua a função castRays por esta versão corrigida
 function castRays() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-    ctx.fillRect(0, canvas.height/2, canvas.width, canvas.height/2); // Chão
+    ctx.fillRect(0, canvas.height/2, canvas.width, canvas.height/2);
     ctx.fillStyle = '#87CEEB';
-    ctx.fillRect(0, 0, canvas.width, canvas.height/2); // Céu
+    ctx.fillRect(0, 0, canvas.width, canvas.height/2);
 
-    const startAngle = player.angle - config.fov / 2;
-    const angleStep = config.fov / config.resolution;
+    const startAngle = player.angle - config.fov/2;
+    const angleStep = config.fov/config.resolution;
 
     for(let ray = 0; ray < config.resolution; ray++) {
         const rayAngle = startAngle + ray * angleStep;
@@ -207,15 +198,16 @@ function castRays() {
 
         let mapX = Math.floor(player.x);
         let mapY = Math.floor(player.y);
-        
+
         let sideDistX, sideDistY;
-        let deltaDistX = Math.abs(1 / rayDir.x);
-        let deltaDistY = Math.abs(1 / rayDir.y);
+        const deltaDistX = Math.abs(1 / rayDir.x);
+        const deltaDistY = Math.abs(1 / rayDir.y);
+        let perpWallDist;
         let stepX, stepY;
         let hit = 0;
         let side;
 
-        // Calcula passos iniciais
+        // Cálculo inicial das distâncias laterais
         if(rayDir.x < 0) {
             stepX = -1;
             sideDistX = (player.x - mapX) * deltaDistX;
@@ -223,7 +215,7 @@ function castRays() {
             stepX = 1;
             sideDistX = (mapX + 1 - player.x) * deltaDistX;
         }
-        
+
         if(rayDir.y < 0) {
             stepY = -1;
             sideDistY = (player.y - mapY) * deltaDistY;
@@ -232,7 +224,7 @@ function castRays() {
             sideDistY = (mapY + 1 - player.y) * deltaDistY;
         }
 
-        // DDA 
+        // DDA
         while(hit === 0) {
             if(sideDistX < sideDistY) {
                 sideDistX += deltaDistX;
@@ -243,27 +235,44 @@ function castRays() {
                 mapY += stepY;
                 side = 1;
             }
-            
+
+            // Verifica limites do mapa
+            if(mapX < 0 || mapX >= gameMap.length || mapY < 0 || mapY >= gameMap[0].length) {
+                hit = 1; // Considera como parede se ultrapassar os limites do mapa
+                continue;
+            }
+
             if(gameMap[mapX][mapY] > 0) hit = 1;
         }
 
-        // Calcula distância
-        let dist = side === 0 
-            ? (mapX - player.x + (1 - stepX)/2) / rayDir.x
-            : (mapY - player.y + (1 - stepY)/2) / rayDir.y;
+        // Cálculo da distância perpendicular CORRETA
+        if(side === 0) {
+            perpWallDist = (mapX - player.x + (1 - stepX) / 2) / rayDir.x;
+        } else {
+            perpWallDist = (mapY - player.y + (1 - stepY) / 2) / rayDir.y;
+        }
 
-        // Altura da parede
-        const height = (canvas.height / dist) * config.wallHeight;
+        // Aplica correção de distorção (fish-eye)
+        const correctedDist = perpWallDist;
+
+        const height = (canvas.height / correctedDist) * config.wallHeight;
         const yStart = Math.max(0, canvas.height/2 - height/2);
         const yEnd = Math.min(canvas.height, canvas.height/2 + height/2);
 
-        // Coordenadas da textura
-        const wallX = side === 0 
-            ? player.y + dist * rayDir.y 
-            : player.x + dist * rayDir.x;
-        const texX = Math.floor((wallX - Math.floor(wallX)) * textures[gameMap[mapX][mapY]].width);
+        // Cálculo da coordenada de textura
+        let wallX;
+        if(side === 0) {
+            wallX = player.y + perpWallDist * rayDir.y;
+        } else {
+            wallX = player.x + perpWallDist * rayDir.x;
+        }
+        wallX -= Math.floor(wallX);
 
-        // Desenha a parede
+        const texX = Math.floor(wallX * textures[gameMap[mapX][mapY]].width);
+        if(texX < 0) texX = 0;
+        if(texX > textures[gameMap[mapX][mapY]].width) texX = textures[gameMap[mapX][mapY]].width - 1;
+
+        // Renderização
         if(textures[gameMap[mapX][mapY]].complete) {
             ctx.drawImage(
                 textures[gameMap[mapX][mapY]],
@@ -273,8 +282,8 @@ function castRays() {
             );
         }
 
-        // Efeito de sombra
-        ctx.fillStyle = `rgba(0, 0, 0, ${dist/12})`;
+        // Sombra baseada na distância
+        ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(perpWallDist/12, 0.8)})`;
         ctx.fillRect(
             ray * (canvas.width/config.resolution), yStart,
             canvas.width/config.resolution, height
@@ -282,31 +291,38 @@ function castRays() {
     }
 }
 
-// Movimentação com colisão
-function movePlayer() {
-    const moveStep = keys['w'] ? config.moveSpeed : keys['s'] ? -config.moveSpeed : 0;
-    const newX = player.x + Math.cos(player.angle) * moveStep;
-    const newY = player.y + Math.sin(player.angle) * moveStep;
-
-    if(gameMap[Math.floor(newX)][Math.floor(player.y)] === 0) player.x = newX;
-    if(gameMap[Math.floor(player.x)][Math.floor(newY)] === 0) player.y = newY;
-
-    player.angle += (keys['d'] ? config.rotSpeed : 0) + (keys['a'] ? -config.rotSpeed : 0);
-}
-
-// Loop principal
 function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     movePlayer();
     castRays();
     requestAnimationFrame(gameLoop);
 }
 
-// Inicia quando as texturas carregarem
-Promise.all(Object.values(textures).map(img => {
-    if(!img.complete) return new Promise(resolve => {
-        img.onload = resolve;
-    });
-})).then(gameLoop);
+function init() {
+    setupControls();
 
+    if(isMobile) {
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        document.body.addEventListener('touchstart', (e) => {
+            if(e.target === canvas) e.preventDefault();
+        }, { passive: false });
+
+        document.body.addEventListener('touchmove', (e) => {
+            if(e.target === canvas) e.preventDefault();
+        }, { passive: false });
+    }
+
+    Promise.all(Object.values(textures).map(img => {
+        return img.complete ? Promise.resolve() : new Promise(resolve => {
+            img.onload = resolve;
+        });
+    })).then(() => {
+        gameLoop();
+    });
+}
 
 init();
