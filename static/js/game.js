@@ -252,14 +252,12 @@ function castRays() {
             perpWallDist = (mapY - player.y + (1 - stepY) / 2) / rayDir.y;
         }
 
-        // Aplica correção de distorção (fish-eye)
-        const correctedDist = perpWallDist;
+	const correctedDist = perpWallDist * Math.cos(player.angle - rayAngle);
 
         const height = (canvas.height / correctedDist) * config.wallHeight;
         const yStart = Math.max(0, canvas.height/2 - height/2);
         const yEnd = Math.min(canvas.height, canvas.height/2 + height/2);
 
-        // Cálculo da coordenada de textura
         let wallX;
         if(side === 0) {
             wallX = player.y + perpWallDist * rayDir.y;
@@ -272,7 +270,6 @@ function castRays() {
         if(texX < 0) texX = 0;
         if(texX > textures[gameMap[mapX][mapY]].width) texX = textures[gameMap[mapX][mapY]].width - 1;
 
-        // Renderização
         if(textures[gameMap[mapX][mapY]].complete) {
             ctx.drawImage(
                 textures[gameMap[mapX][mapY]],
@@ -282,7 +279,6 @@ function castRays() {
             );
         }
 
-        // Sombra baseada na distância
         ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(perpWallDist/12, 0.8)})`;
         ctx.fillRect(
             ray * (canvas.width/config.resolution), yStart,
