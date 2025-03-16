@@ -262,6 +262,10 @@ function castRays() {
         }
         wallX -= Math.floor(wallX);
 
+	if ((side === 0 && rayDir.x > 0) || (side === 1 && rayDir.y < 0)) {
+       wallX = 1 - wallX;
+   }
+
         const texX = Math.floor(wallX * textures[gameMap[mapX][mapY]].width * 0.99);
         const tex = textures[gameMap[mapX][mapY]];
 
