@@ -117,25 +117,25 @@ function drawSprites() {
     weaponHeight
   );
   
-  bullets.forEach(bullet => {
-    const bulletSize = 10;
-    ctx.drawImage(
-      sprites.bullet,
-      bullet.x * (canvas.width / gameMap.length) - bulletSize / 2,
-      bullet.y * (canvas.height / gameMap[0].length) - bulletSize / 2,
-      bulletSize,
-      bulletSize
-    );
-  });
-  
-  const enemySize = 50;
+  const cellWidth = canvas.width / gameMap[0].length;
+  const cellHeight = canvas.height / gameMap.length;
   ctx.drawImage(
     sprites.enemy,
-    enemy.x * (canvas.width / gameMap.length) - enemySize / 2,
-    enemy.y * (canvas.height / gameMap[0].length) - enemySize / 2,
-    enemySize,
-    enemySize
+    enemy.x * cellWidth - 25,
+    enemy.y * cellHeight - 25,
+    50,
+    50
   );
+  
+  bullets.forEach(bullet => {
+    ctx.drawImage(
+      sprites.bullet,
+      bullet.x * cellWidth - 5,
+      bullet.y * cellHeight - 5,
+      10,
+      10
+    );
+  });
 }
 
 function gameLoop() {

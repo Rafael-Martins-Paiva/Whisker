@@ -13,8 +13,6 @@ const config = {
     backwardSpeedMultiplier: 0.8
 };
 
-alert("foi fiote")
-
 canvas.width = isMobile ? window.innerWidth : 800;
 canvas.height = isMobile ? window.innerHeight : 600;
 
@@ -36,8 +34,8 @@ const player = {
 };
 
 const enemy = {
-  x: 5.5, 
-  y: 5.5, 
+  x: 1.5, 
+  y: 1.5, 
   health: 100 
 };
 
