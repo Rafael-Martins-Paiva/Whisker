@@ -150,12 +150,12 @@ function updateBullets() {
 }
 
 function checkBulletCollision(bullet) {
-  const enemyX = Math.floor(enemy.x);
-  const enemyY = Math.floor(enemy.y);
-  const bulletX = Math.floor(bullet.x);
-  const bulletY = Math.floor(bullet.y);
+  const enemyCol = Math.floor(enemy.x);
+  const enemyRow = Math.floor(enemy.y);
+  const bulletCol = Math.floor(bullet.x);
+  const bulletRow = Math.floor(bullet.y);
   
-  return bulletX === enemyX && bulletY === enemyY;
+  return (bulletCol === enemyCol && bulletRow === enemyRow);
 }
 
 function updateEnemy() {

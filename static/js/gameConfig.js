@@ -34,8 +34,8 @@ const player = {
 };
 
 const enemy = {
-  x: 1.5, 
-  y: 1.5, 
+  x: 2.5, 
+  y: 2.5, 
   health: 100 
 };
 
