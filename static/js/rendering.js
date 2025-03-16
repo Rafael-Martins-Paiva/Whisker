@@ -106,11 +106,47 @@ function castRays() {
     }
 }
 
+function drawSprites() {
+  const weaponWidth = canvas.width / 4;
+  const weaponHeight = canvas.height / 2;
+  ctx.drawImage(
+    sprites.weapon,
+    canvas.width / 2 - weaponWidth / 2,
+    canvas.height - weaponHeight,
+    weaponWidth,
+    weaponHeight
+  );
+  
+  bullets.forEach(bullet => {
+    const bulletSize = 10;
+    ctx.drawImage(
+      sprites.bullet,
+      bullet.x * (canvas.width / gameMap.length) - bulletSize / 2,
+      bullet.y * (canvas.height / gameMap[0].length) - bulletSize / 2,
+      bulletSize,
+      bulletSize
+    );
+  });
+  
+  const enemySize = 50;
+  ctx.drawImage(
+    sprites.enemy,
+    enemy.x * (canvas.width / gameMap.length) - enemySize / 2,
+    enemy.y * (canvas.height / gameMap[0].length) - enemySize / 2,
+    enemySize,
+    enemySize
+  );
+}
+
 function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    movePlayer();
-    castRays();
-    requestAnimationFrame(gameLoop);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  movePlayer();
+  handleShooting();
+  updateBullets();
+  updateEnemy();
+  castRays();
+  drawSprites();
+  requestAnimationFrame(gameLoop);
 }
 
 function init() {

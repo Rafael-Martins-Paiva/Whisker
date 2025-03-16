@@ -111,3 +111,55 @@ function movePlayer() {
         }
     }
 }
+
+const bullets = []; 
+const bulletSpeed = 0.2; 
+
+function shoot() {
+  bullets.push({
+    x: player.x,
+    y: player.y,
+    angle: player.angle,
+    distance: 0 
+  });
+}
+
+function handleShooting() {
+  if (keys[' ']) { 
+    shoot();
+    keys[' '] = false;
+  }
+}
+
+function updateBullets() {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const bullet = bullets[i];
+    bullet.x += Math.cos(bullet.angle) * bulletSpeed;
+    bullet.y += Math.sin(bullet.angle) * bulletSpeed;
+    bullet.distance += bulletSpeed;
+    
+    if (bullet.distance > 10) {
+      bullets.splice(i, 1);
+    }
+    
+    if (checkBulletCollision(bullet)) {
+      bullets.splice(i, 1); 
+      enemy.health -= 10; 
+    }
+  }
+}
+
+function checkBulletCollision(bullet) {
+  const enemyX = Math.floor(enemy.x);
+  const enemyY = Math.floor(enemy.y);
+  const bulletX = Math.floor(bullet.x);
+  const bulletY = Math.floor(bullet.y);
+  
+  return bulletX === enemyX && bulletY === enemyY;
+}
+
+function updateEnemy() {
+  if (enemy.health <= 0) {
+    gameMap[Math.floor(enemy.x)][Math.floor(enemy.y)] = 0;
+  }
+}

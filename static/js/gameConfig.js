@@ -35,6 +35,12 @@ const player = {
     angle: 0
 };
 
+const enemy = {
+  x: 5.5, 
+  y: 5.5, 
+  health: 100 
+};
+
 const textures = {
     1: new Image(),
     2: new Image(),
@@ -44,6 +50,16 @@ const textures = {
 textures[1].src = '/static/textures/wall1.jpg';
 textures[2].src = '/static/textures/wall2.jpg';
 textures[3].src = '/static/textures/wall3.jpg';
+
+const sprites = {
+  weapon: new Image(),
+  bullet: new Image(),
+  enemy: new Image()
+};
+
+sprites.weapon.src = '/static/sprites/Weapon.jpg'; 
+sprites.bullet.src = '/static/sprites/Bullet.jpg'; 
+sprites.enemy.src = '/static/sprites/Enemy.jpg'; 
 
 const keys = {};
 let touchControls = {
