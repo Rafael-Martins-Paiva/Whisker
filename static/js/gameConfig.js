@@ -18,7 +18,7 @@ canvas.height = isMobile ? window.innerHeight : 600;
 
 const gameMap = [
     [1,1,1,1,1,1,1,1],
-    [1,0,0,0,0,0,0,1],
+    [1,0,0,2,0,0,0,1],
     [1,0,0,0,0,0,0,1],
     [1,0,0,0,0,0,3,1],
     [1,0,0,0,0,0,0,1],
@@ -55,9 +55,9 @@ const sprites = {
   enemy: new Image()
 };
 
-sprites.weapon.src = '/static/sprites/Weapon.jpg'; 
-sprites.bullet.src = '/static/sprites/Bullet.jpg'; 
-sprites.enemy.src = '/static/sprites/Enemy.jpg'; 
+sprites.weapon.src = '/static/Sprites/Weapon.jpg'; 
+sprites.bullet.src = '/static/Sprites/Bullet.jpg'; 
+sprites.enemy.src = '/static/Sprites/Enemy.jpg'; 
 
 const keys = {};
 let touchControls = {
