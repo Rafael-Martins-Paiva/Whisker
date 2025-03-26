@@ -119,13 +119,7 @@ function drawSprites() {
   
   const cellWidth = canvas.width / gameMap[0].length;
   const cellHeight = canvas.height / gameMap.length;
-  ctx.drawImage(
-    sprites.enemy,
-    enemy.x * cellWidth - 25,
-    enemy.y * cellHeight - 25,
-    50,
-    50
-  );
+
   
   bullets.forEach(bullet => {
     ctx.drawImage(

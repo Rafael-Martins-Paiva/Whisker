@@ -59,29 +59,29 @@ function moveBackward() {
 }
 
 function movePlayer() {
-    if(keys['w']) {
+    if(keys['w', 'ArrowUp']) {
         const newX = player.x + Math.cos(player.angle) * config.moveSpeed;
         const newY = player.y + Math.sin(player.angle) * config.moveSpeed;
         if(newX >= 0 && newX < gameMap.length &&
-           newY >= 0 && newY < gameMap[0].length && 
-           gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {                                     
-            player.x = newX;                            
-            player.y = newY;                        
+           newY >= 0 && newY < gameMap[0].length &&
+           gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {
+            player.x = newX;
+            player.y = newY;
         }
     }
 
-    if(keys['s']) {                                 
-        const [newX, newY] = moveBackward();        
+    if(keys['s', 'ArrowDown']) {
+        const [newX, newY] = moveBackward();
         if(newX >= 0 && newX < gameMap.length &&
-           newY >= 0 && newY < gameMap[0].length && 
-           gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {                                     
-            player.x = newX;                            
-            player.y = newY;                        
+           newY >= 0 && newY < gameMap[0].length &&
+           gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {
+            player.x = newX;
+            player.y = newY;
         }
     }
 
-    if(keys['a']) player.angle -= config.rotSpeed;
-    if(keys['d']) player.angle += config.rotSpeed;
+    if(keys['a', 'ArrowLeft']) player.angle -= config.rotSpeed;
+    if(keys['d', 'ArrowRight']) player.angle += config.rotSpeed;
 
     if(isMobile) {
         if(touchControls.up || touchMoveY < -20) {
@@ -93,13 +93,13 @@ function movePlayer() {
             }
         }
 
-        if(touchMoveY > 20) {                           
+        if(touchMoveY > 20) {
             const [newX, newY] = moveBackward();
             if(newX >= 0 && newX < gameMap.length &&
             newY >= 0 && newY < gameMap[0].length && 
-            gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {                                     
-                player.x = newX;                            
-                player.y = newY;                        
+            gameMap[Math.floor(newX)][Math.floor(newY)] === 0) {
+                player.x = newX;
+                player.y = newY;
             }
         }
 
@@ -112,8 +112,8 @@ function movePlayer() {
     }
 }
 
-const bullets = []; 
-const bulletSpeed = 0.2; 
+const bullets = [];
+const bulletSpeed = 0.2;
 
 function shoot() {
   bullets.push({
@@ -125,7 +125,7 @@ function shoot() {
 }
 
 function handleShooting() {
-  if (keys[' ']) { 
+  if (keys[' ']) {
     shoot();
     keys[' '] = false;
   }
@@ -143,8 +143,8 @@ function updateBullets() {
     }
     
     if (checkBulletCollision(bullet)) {
-      bullets.splice(i, 1); 
-      enemy.health -= 10; 
+      bullets.splice(i, 1);
+      enemy.health -= 10;
     }
   }
 }

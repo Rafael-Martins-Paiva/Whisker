@@ -4,10 +4,10 @@ const ctx = canvas.getContext('2d');
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 const config = {
-    resolution: isMobile ? 80 : 120,
+    resolution: isMobile ? 80 : 640,
     fov: Math.PI / (isMobile ? 2.2 : 2.5),
-    moveSpeed: isMobile ? 0.10 : 0.12,
-    rotSpeed: isMobile ? 0.06 : 0.07,
+    moveSpeed: isMobile ? 0.8 : 0.10,
+    rotSpeed: isMobile ? 0.04 : 0.05,
     wallHeight: 1.0,
     touchSensitivity: 0.04,
     backwardSpeedMultiplier: 0.8
@@ -55,9 +55,9 @@ const sprites = {
   enemy: new Image()
 };
 
-sprites.weapon.src = '/static/Sprites/Weapon.jpg'; 
-sprites.bullet.src = '/static/Sprites/Bullet.jpg'; 
-sprites.enemy.src = '/static/Sprites/Enemy.jpg'; 
+sprites.weapon.src = '/static/Sprites/gun.webp';
+sprites.bullet.src = '/static/Sprites/Bullet.jpg';
+sprites.enemy.src = '/static/Sprites/Enemy.jpg';
 
 const keys = {};
 let touchControls = {
